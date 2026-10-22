@@ -122,7 +122,7 @@ WAV形式の音声
 
 ### ③と④: f0とvolumeの順番
 
-`volume`の推論には`f0`を入力として使います。そのため、生成は必ず**`f0`→`volume`の順**になります。
+`volume`の推論には`f0`を入力として使います。そのため、生成は必ず **`f0`→`volume`の順** になります。
 
 `Score`や`FrameAudioQuery.phonemes`を編集した場合は、まず`create_sing_frame_f0`で`f0`を作り直し、その`FrameAudioQuery`を使って`create_sing_frame_volume`で`volume`を作り直してください。`f0`だけを手で調整した場合（後述の[音域調整](#音域調整)など）も、`volume`は`f0`を入力として推論されるため、作り直せば調整後の`f0`が音量に反映されます。
 
