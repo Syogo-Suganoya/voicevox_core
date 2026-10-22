@@ -12,6 +12,7 @@ on:
       - 'crates/voicevox_core_python_api/**.pyi'
       - 'crates/voicevox_core_python_api/requirements*.txt'
       - 'crates/voicevox_core_python_api/pyproject.toml'
+      - 'ruff.toml'
       - '.github/workflows/python_lint.yml'
 
 defaults:
@@ -39,11 +40,11 @@ jobs:
         run: poetry install --with examples --with test
       - name: Check code style for voicevox_core_python_api
         run: |
-          black --check .
-          isort --check .
+          ruff format --check .
+          ruff check .
       - name: Check code style for example/python
         working-directory: ./example/python
         run: |
-          black --check --diff .
-          isort --check --diff --profile black .
+          ruff format --check --diff .
+          ruff check .
       # FIXME: Pyrightも動かす

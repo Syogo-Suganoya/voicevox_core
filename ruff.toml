@@ -1,0 +1,2 @@
+# example/pythonにもcrates/voicevox_core_python_apiと同じ設定を適用する
+extend = "./crates/voicevox_core_python_api/pyproject.toml"
