@@ -15,9 +15,9 @@ use easy_ext::ext;
 use log::{debug, warn};
 use macros::pyproject_project_version;
 use pyo3::{
-    Bound, Py, PyAny, PyClass, PyResult, PyTypeInfo, Python, create_exception,
-    exceptions::{PyException, PyKeyError, PyTypeError, PyValueError},
-    pyclass, pyfunction, pymethods, pymodule,
+    Bound, Py, PyAny, PyClass, PyResult, PyTypeInfo, Python,
+    exceptions::{PyTypeError, PyValueError},
+    import_exception, pyclass, pyfunction, pymethods, pymodule,
     types::{
         PyAnyMethods as _, PyList, PyModule, PyModuleMethods as _, PySlice, PySliceMethods as _,
         PyString,
@@ -55,7 +55,7 @@ fn rust(py: Python<'_>, module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_wrapped(wrap_pyfunction!(wav_from_s16le))?;
     module.add_wrapped(wrap_pyfunction!(ensure_compatible))?;
 
-    add_exceptions(module)?;
+    module.add("_EXCEPTION_NAMES", EXCEPTION_NAMES)?;
 
     let blocking_module = PyModule::new(py, "voicevox_core._rust.blocking")?;
     blocking_module.add_class::<self::blocking::Synthesizer>()?;
@@ -88,44 +88,41 @@ impl Bound<'_, PyModule> {
     }
 }
 
+// 例外クラスの実体はPythonコード側（`voicevox_core._python`）で定義し、ここでは`voicevox_core`からインポートする。
 macro_rules! exceptions {
-    ($($name:ident: $base:ty;)*) => {
+    ($($name:ident;)*) => {
         $(
-            create_exception!(voicevox_core, $name, $base);
+            import_exception!(voicevox_core, $name);
         )*
 
-        fn add_exceptions(module: &Bound<'_, PyModule>) -> PyResult<()> {
-            $(
-                module.add(stringify!($name), module.py().get_type::<$name>())?;
-            )*
-            Ok(())
-        }
+        /// Rust側がインポートする例外クラスの名前。名前の打ち間違いをPython側のテストで検出するために公開する。
+        const EXCEPTION_NAMES: &[&str] = &[$(stringify!($name)),*];
     };
 }
 
 exceptions! {
-    NotLoadedOpenjtalkDictError: PyException;
-    GpuSupportError: PyException;
-    InitInferenceRuntimeError: PyException;
-    OpenZipFileError: PyException;
-    ReadZipEntryError: PyException;
-    ModelAlreadyLoadedError: PyException;
-    StyleAlreadyLoadedError: PyException;
-    InvalidModelFormatError: PyException;
-    InvalidModelDataError: PyException;
-    GetSupportedDevicesError: PyException;
-    StyleNotFoundError: PyKeyError;
-    ModelNotFoundError: PyKeyError;
-    RunModelError: PyException;
-    AnalyzeTextError: PyException;
-    ParseKanaError: PyValueError;
-    LoadUserDictError: PyException;
-    SaveUserDictError: PyException;
-    WordNotFoundError: PyKeyError;
-    UseUserDictError: PyException;
-    InvalidWordError: PyValueError;
-    InvalidQueryError: PyValueError;
-    IncompatibleQueriesError: PyValueError;
+    NotLoadedOpenjtalkDictError;
+    GpuSupportError;
+    InitInferenceRuntimeError;
+    OpenZipFileError;
+    ReadZipEntryError;
+    ModelAlreadyLoadedError;
+    StyleAlreadyLoadedError;
+    InvalidModelFormatError;
+    InvalidModelDataError;
+    GetSupportedDevicesError;
+    StyleNotFoundError;
+    ModelNotFoundError;
+    RunModelError;
+    AnalyzeTextError;
+    ParseKanaError;
+    LoadUserDictError;
+    SaveUserDictError;
+    WordNotFoundError;
+    UseUserDictError;
+    InvalidWordError;
+    InvalidQueryError;
+    IncompatibleQueriesError;
 }
 
 #[derive(derive_more::Debug)]
