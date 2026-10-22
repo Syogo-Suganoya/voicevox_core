@@ -46,7 +46,9 @@ def test_blocking_tts(
     def tts() -> object:
         return synth.tts(TEXT, STYLE_ID)
 
-    benchmark.pedantic(tts, rounds=10, warmup_rounds=2)
+    benchmark.pedantic(  # pyright: ignore[reportUnknownMemberType]
+        tts, rounds=10, warmup_rounds=2
+    )
 
 
 @pytest.fixture
@@ -76,10 +78,12 @@ def test_asyncio_tts(
     def tts() -> object:
         return asyncio.run(synth.tts(TEXT, STYLE_ID))
 
-    benchmark.pedantic(tts, rounds=10, warmup_rounds=2)
+    benchmark.pedantic(  # pyright: ignore[reportUnknownMemberType]
+        tts, rounds=10, warmup_rounds=2
+    )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture  # pyright: ignore[reportUnknownMemberType, reportUntypedFunctionDecorator]
 async def asyncio_synthesizer() -> voicevox_core.asyncio.Synthesizer:
     from voicevox_core.asyncio import (
         Onnxruntime,

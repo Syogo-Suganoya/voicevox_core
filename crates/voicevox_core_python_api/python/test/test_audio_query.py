@@ -1,7 +1,5 @@
-import dataclasses
 import textwrap
 
-import pytest
 from voicevox_core import AudioQuery
 
 
