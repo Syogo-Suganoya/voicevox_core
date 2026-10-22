@@ -30,6 +30,27 @@
  * </dl>
  *
  * <dl>
+ *   <dt id="voicevox-core-crash">
+ *     <a href="#voicevox-core-crash">💥 Crash</a>
+ *   </dt>
+ *
+ *   <dd>
+ *     本ドキュメントで「<b>クラッシュ</b>する」と書かれている場合、それはプロセスが即座に終了することを意味する。エラーとして結果コードが返ることはなく、呼び出し元に処理が戻ることもない。
+ *
+ *     これはRustにおける<b>パニック</b>(_panic_)によるものである。[リリース](https://github.com/voicevox/voicevox_core/releases)されているライブラリは[`panic = "abort"`](https://doc.rust-lang.org/cargo/reference/profiles.html#panic)でビルドされており、パニックするとその場でプロセスがアボートする。また`panic = "abort"`でビルドしていない場合でも、パニックは`extern "C"`関数の境界を越えられないため、同様にプロセスがアボートする。
+ *
+ *     クラッシュは<a href="#voicevox-core-safety">安全性要件</a>の違反による未定義動作とは異なり、挙動が定義されている。クラッシュする条件は各関数のドキュメントに記載する。ただし以下の条件は全関数に共通するため、各関数では省略する。
+ *
+ *     - 次のオブジェクトへのポインタを引数として受け取る関数に、ヌルポインタ、このライブラリで構築したものではないポインタ、もしくは既に<b>破棄</b>(_destruct_)されたオブジェクトへのポインタを渡した場合。ただし`…_delete`系の関数にヌルポインタを渡すことは許される。
+ *         - ::OpenJtalkRc
+ *         - ::VoicevoxUserDict
+ *         - ::VoicevoxSynthesizer
+ *         - ::VoicevoxVoiceModelFile
+ *         - ::VoicevoxAudioFeature
+ *   </dd>
+ * </dl>
+ *
+ * <dl>
  *   <dt id="voicevox-core-safety">
  *     <a href="#voicevox-core-safety">⚠️ Safety</a>
  *   </dt>
@@ -784,7 +805,9 @@ VoicevoxResultCode voicevox_open_jtalk_rc_analyze(const struct OpenJtalkRc *open
  *
  * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
  *
- * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+ * この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
+ * `open_jtalk`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] open_jtalk 破棄対象。nullable
  *
@@ -1240,7 +1263,7 @@ VoicevoxResultCode voicevox_ensure_compatible(const char *score_json,
 /**
  * signed 16-bit little endianのPCMデータからWAV形式のバイナリを生成する。
  *
- * `pcm`がヌルならクラッシュする。
+ * `pcm`がヌルなら<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] pcm_length PCMデータのバイト長
  * @param [in] pcm PCMデータ。非ヌル
@@ -1329,7 +1352,9 @@ char *voicevox_voice_model_file_create_metas_json(const struct VoicevoxVoiceMode
  *
  * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
  *
- * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+ * この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
+ * `model`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] model 破棄対象。nullable
  *
@@ -1370,7 +1395,9 @@ VoicevoxResultCode voicevox_synthesizer_new(const struct VoicevoxOnnxruntime *on
  *
  * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
  *
- * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+ * この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
+ * `synthesizer`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] synthesizer 破棄対象。nullable
  *
@@ -1891,7 +1918,9 @@ VoicevoxResultCode voicevox_synthesizer_render(const struct VoicevoxSynthesizer 
  *
  * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
  *
- * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+ * この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
+ * `audio_feature`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] audio_feature 破棄対象。nullable
  *
@@ -2158,6 +2187,8 @@ VoicevoxResultCode voicevox_synthesizer_frame_synthesis(const struct VoicevoxSyn
 /**
  * 文字列を解放する。
  *
+ * `string`がヌルポインタでなく、かつこのライブラリが生成した未解放の文字列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。また ::voicevox_error_result_to_message などが返す、解放できない文字列を渡した場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
  * @param [in] string 解放する文字列。nullable
  *
  * \safety{
@@ -2192,6 +2223,8 @@ void voicevox_string_free(char *string);
 
 /**
  * ::voicevox_string_free の別名。非推奨。
+ *
+ * `json`がヌルポインタでなく、かつこのライブラリが生成した未解放の文字列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。また ::voicevox_error_result_to_message などが返す、解放できない文字列を渡した場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] json 解放するJSON文字列。nullable
  *
@@ -2231,6 +2264,8 @@ void voicevox_json_free(char *json);
  *
  * ::voicevox_empty_bytes に対しては警告のログを出す。
  *
+ * `bytes`がヌルポインタでも ::voicevox_empty_bytes でもなく、かつこのライブラリが生成した未解放のバイト列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
  * @param [in] bytes 解放するバイト列。nullable
  *
  * \safety{
@@ -2254,6 +2289,8 @@ void voicevox_bytes_free(uint8_t *bytes);
 
 /**
  * ::voicevox_bytes_free の別名。非推奨。
+ *
+ * `wav`がヌルポインタでも ::voicevox_empty_bytes でもなく、かつこのライブラリが生成した未解放のバイト列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] wav 解放するWAVデータ。nullable
  *
@@ -2479,7 +2516,9 @@ VoicevoxResultCode voicevox_user_dict_save(const struct VoicevoxUserDict *user_d
  *
  * 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
  *
- * この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+ * この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+ *
+ * `user_dict`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
  *
  * @param [in] user_dict 破棄対象。nullable
  *

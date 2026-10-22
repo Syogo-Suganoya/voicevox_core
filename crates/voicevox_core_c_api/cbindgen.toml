@@ -35,6 +35,27 @@ header = """
  * </dl>
  *
  * <dl>
+ *   <dt id="voicevox-core-crash">
+ *     <a href="#voicevox-core-crash">💥 Crash</a>
+ *   </dt>
+ *
+ *   <dd>
+ *     本ドキュメントで「<b>クラッシュ</b>する」と書かれている場合、それはプロセスが即座に終了することを意味する。エラーとして結果コードが返ることはなく、呼び出し元に処理が戻ることもない。
+ *
+ *     これはRustにおける<b>パニック</b>(_panic_)によるものである。[リリース](https://github.com/voicevox/voicevox_core/releases)されているライブラリは[`panic = "abort"`](https://doc.rust-lang.org/cargo/reference/profiles.html#panic)でビルドされており、パニックするとその場でプロセスがアボートする。また`panic = "abort"`でビルドしていない場合でも、パニックは`extern "C"`関数の境界を越えられないため、同様にプロセスがアボートする。
+ *
+ *     クラッシュは<a href="#voicevox-core-safety">安全性要件</a>の違反による未定義動作とは異なり、挙動が定義されている。クラッシュする条件は各関数のドキュメントに記載する。ただし以下の条件は全関数に共通するため、各関数では省略する。
+ *
+ *     - 次のオブジェクトへのポインタを引数として受け取る関数に、ヌルポインタ、このライブラリで構築したものではないポインタ、もしくは既に<b>破棄</b>(_destruct_)されたオブジェクトへのポインタを渡した場合。ただし`…_delete`系の関数にヌルポインタを渡すことは許される。
+ *         - ::OpenJtalkRc
+ *         - ::VoicevoxUserDict
+ *         - ::VoicevoxSynthesizer
+ *         - ::VoicevoxVoiceModelFile
+ *         - ::VoicevoxAudioFeature
+ *   </dd>
+ * </dl>
+ *
+ * <dl>
  *   <dt id="voicevox-core-safety">
  *     <a href="#voicevox-core-safety">⚠️ Safety</a>
  *   </dt>
