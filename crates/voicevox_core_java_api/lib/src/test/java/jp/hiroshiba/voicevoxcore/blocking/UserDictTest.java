@@ -11,6 +11,7 @@ import jp.hiroshiba.voicevoxcore.AudioQuery;
 import jp.hiroshiba.voicevoxcore.TestUtils;
 import jp.hiroshiba.voicevoxcore.UserDictWord;
 import jp.hiroshiba.voicevoxcore.exceptions.InvalidModelDataException;
+import jp.hiroshiba.voicevoxcore.exceptions.InvalidWordException;
 import jp.hiroshiba.voicevoxcore.exceptions.LoadUserDictException;
 import jp.hiroshiba.voicevoxcore.exceptions.RunModelException;
 import org.junit.jupiter.api.Test;
@@ -93,5 +94,19 @@ class UserDictTest extends TestUtils {
               word.priority(11);
             });
     assertEquals("priority", e.getMessage());
+  }
+
+  @Test
+  void checkWordAccentType() {
+    // 「ホゲ」は2モーラなので、アクセント型は0から2まで
+    for (int accentType = 0; accentType <= 2; accentType++) {
+      new UserDictWord("hoge", "ホゲ", accentType);
+    }
+
+    assertThrowsExactly(
+        InvalidWordException.class,
+        () -> {
+          new UserDictWord("hoge", "ホゲ", 3);
+        });
   }
 }
