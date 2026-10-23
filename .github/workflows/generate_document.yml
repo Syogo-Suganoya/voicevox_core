@@ -48,8 +48,13 @@ jobs:
         with:
           java-version: "11"
           distribution: "temurin"
+      - name: Install cargo-binstall
+        uses: taiki-e/install-action@3f74d7c16a4242f1c95561e98edc25d36adb4375 # v2.87.12
+        with:
+          tool: cargo-binstall
       - name: Install cargo-docs-rs
-        uses: dtolnay/install@cargo-docs-rs
+        # バイナリが配布されていなければ`cargo install`にフォールバックする
+        run: cargo binstall cargo-docs-rs --no-confirm --log-level debug
       - name: Create a venv
         uses: ./.github/actions/create-venv
       - name: Install python dependencies
