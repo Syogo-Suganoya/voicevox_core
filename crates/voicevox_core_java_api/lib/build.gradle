@@ -19,6 +19,12 @@ repositories {
     mavenCentral()
 }
 
+// 依存関係の解決結果を`gradle.lockfile`に固定する。
+// 依存を変更したら`./gradlew :lib:dependencies --write-locks`で更新すること。
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.2'
