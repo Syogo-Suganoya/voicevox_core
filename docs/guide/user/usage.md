@@ -43,6 +43,13 @@ chmod +x download
 
 詳細な Downloader の使い方は [こちら](./downloader.md) で紹介しています。また、GPUの使用については[こちら](./gpu.md)で説明しています。
 
+> [!NOTE]
+> Linux で CUDA 版を利用する場合は、追加ライブラリ（cuDNN など）が実行時に見つかるよう、`additional_libraries`ディレクトリを環境変数`LD_LIBRARY_PATH`に追加してください。
+>
+> ```sh
+> export LD_LIBRARY_PATH="$PWD/additional_libraries:$LD_LIBRARY_PATH"
+> ```
+
 <details>
 <summary> Downloader を使わない場合</summary>
 
@@ -60,6 +67,7 @@ Raspberry Pi 用の ONNX Runtime は以下からダウンロードできます�
 2. 同じく Releases から音声モデルの zip をダウンロードしてください。
 3. [Open JTalk から配布されている辞書ファイル](https://jaist.dl.sourceforge.net/project/open-jtalk/Dictionary/open_jtalk_dic-1.11/open_jtalk_dic_utf_8-1.11.tar.gz) をダウンロードしてC APIライブラリを展開したディレクトリに展開してください。
 4. CUDA や DirectML を利用する場合は、 [追加ライブラリ](https://github.com/VOICEVOX/voicevox_additional_libraries/releases/latest) をダウンロードして、C APIライブラリを展開したディレクトリに展開してください。
+   Linux で CUDA を利用する場合は、追加ライブラリを展開したディレクトリを環境変数`LD_LIBRARY_PATH`にも追加してください。
 
 </details>
 
