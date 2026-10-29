@@ -4,34 +4,10 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.9.10'
 }
 
-version = gradle.ext.version
+apply from: 'common.gradle'
 
 repositories {
     google()
-    mavenCentral()
-}
-
-dependencies {
-    // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.2'
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation group: 'com.google.code.gson', name: 'gson', version: gradle.ext.gsonVersion
-
-    // https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
-    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: gradle.ext.jakartaValidationVersion
-
-    // https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api
-    implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: gradle.ext.jakartaAnnotationVersion
-}
-
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
 }
 
 android {
