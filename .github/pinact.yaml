@@ -8,5 +8,3 @@ files:
 ignore_actions:
   - name: dtolnay/rust-toolchain
     ref: master
-  - name: dtolnay/install
-    ref: cargo-docs-rs
