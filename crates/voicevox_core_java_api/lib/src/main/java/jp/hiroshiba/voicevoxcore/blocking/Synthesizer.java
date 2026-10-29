@@ -592,7 +592,7 @@ public final class Synthesizer {
     }
 
     /**
-     * CPU利用数を指定する。0を指定すると環境に合わせたCPUが利用される。
+     * CPU利用数を指定する。0を指定すると論理コア数の半分(最低1)が利用される。
      *
      * @param cpuNumThreads CPU利用数。
      * @return ビルダー。
