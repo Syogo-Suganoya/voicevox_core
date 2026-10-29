@@ -798,7 +798,7 @@ trait AsInner {
             note_vowels,
         } = notes.into();
 
-        let consonant_lengths = &self
+        let mut consonant_lengths = self
             .status()
             .predict_sing_consonant_length::<Self::Async>(
                 note_constants,
@@ -810,26 +810,28 @@ trait AsInner {
             .into_vec();
 
         let consonant_lengths = (|| {
-            let consonant_lengths = NonEmptySlice::new(consonant_lengths)
-                .with_context(|| "output is an empty array")?;
-            ensure!(consonant_lengths.len() == notes.len(), "wrong length");
+            ensure!(consonant_lengths.len() == notes.len().get(), "wrong length");
             for (
-                &consonant_length,
+                consonant_length,
                 ValidatedNote {
                     pau_or_key_and_lyric,
                     ..
                 },
-            ) in itertools::zip_eq(consonant_lengths, notes)
+            ) in itertools::zip_eq(&mut consonant_lengths, notes)
             {
-                if consonant_length == 0 && pau_or_key_and_lyric.has_consonant() {
-                    bail!("inferred `0` for mora with a consonant");
-                }
-                if consonant_length != 0 && !pau_or_key_and_lyric.has_consonant() {
+                if pau_or_key_and_lyric.has_consonant() {
+                    // モデルの性質上、子音があっても子音長が`0`以下と推論されることがあるため、
+                    // その場合は`1`にする
+                    *consonant_length = (*consonant_length).max(1);
+                } else if *consonant_length != 0 {
                     bail!("inferred non-zero for mora without a consonant")
                 }
             }
-            Ok(consonant_lengths)
+            Ok(())
         })()
+        .and_then(|()| {
+            NonEmptySlice::new(&consonant_lengths).with_context(|| "output is an empty array")
+        })
         .map_err(|source| ErrorRepr::RunModel { note: None, source })?;
 
         let phoneme_lengths = song::interpret::phoneme_lengths(
