@@ -43,7 +43,7 @@ public final class UserDictWord {
    * @param surface 言葉の表層形。
    * @param pronunciation 言葉の発音。
    * @param accentType アクセント型。
-   * @throws IllegalArgumentException pronunciationが不正な場合。
+   * @throws IllegalArgumentException pronunciationが不正な場合、またはaccentTypeがpronunciationのモーラ数を超える場合。
    */
   public UserDictWord(String surface, String pronunciation, int accentType) {
     if (surface == null) {
@@ -57,7 +57,7 @@ public final class UserDictWord {
     }
 
     this.surface = rsToZenkaku(surface);
-    rsValidatePronunciation(pronunciation);
+    rsValidatePronunciationAndAccentType(pronunciation, accentType);
     this.pronunciation = pronunciation;
     this.wordType = Type.COMMON_NOUN;
     this.accentType = accentType;
@@ -96,7 +96,8 @@ public final class UserDictWord {
   @Nonnull
   private static native String rsToZenkaku(String surface);
 
-  private static native void rsValidatePronunciation(String pronunciation);
+  private static native void rsValidatePronunciationAndAccentType(
+      String pronunciation, int accentType);
 
   /** 単語の種類。 */
   public static final class Type {
