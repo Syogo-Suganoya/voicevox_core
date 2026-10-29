@@ -86,7 +86,7 @@ def _typecheck_dataclass_field(field_value: object, field_type: object) -> None:
     elif typing.get_origin(field_type) is list:
         assert isinstance(field_value, list)
         (element_type,) = typing.get_args(field_type)
-        for element_value in field_value:
+        for element_value in typing.cast(list[object], field_value):
             _typecheck_dataclass_field(element_value, element_type)
     elif typing.get_origin(field_type) is Literal:
         assert field_value in typing.get_args(field_type)

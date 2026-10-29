@@ -41,16 +41,20 @@ async def test_access_after_exit_denied(synthesizer: Synthesizer) -> None:
         _ = synthesizer.metas()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture  # pyright: ignore[reportUnknownMemberType, reportUntypedFunctionDecorator]
 async def synthesizer(onnxruntime: Onnxruntime, open_jtalk: OpenJtalk) -> Synthesizer:
     return Synthesizer(onnxruntime, open_jtalk)
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture(  # pyright: ignore[reportUnknownMemberType, reportUntypedFunctionDecorator]
+    scope="function"
+)
 async def onnxruntime() -> Onnxruntime:
     return await Onnxruntime.load_once(filename=conftest.onnxruntime_filename)
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture(  # pyright: ignore[reportUnknownMemberType, reportUntypedFunctionDecorator]
+    scope="function"
+)
 async def open_jtalk() -> OpenJtalk:
     return await OpenJtalk.new(conftest.open_jtalk_dic_dir)

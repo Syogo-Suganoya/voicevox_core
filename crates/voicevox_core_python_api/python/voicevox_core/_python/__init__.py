@@ -1,3 +1,6 @@
+# `_rust`の非公開関数を、`voicevox_core`内部向けに意図的に再エクスポートしている
+# pyright: reportPrivateUsage=false
+
 import dataclasses
 import typing
 from dataclasses import InitVar
