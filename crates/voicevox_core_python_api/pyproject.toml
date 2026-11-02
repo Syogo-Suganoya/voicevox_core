@@ -19,8 +19,12 @@ classifiers = [
 requires = ["maturin>=1.10.2,<2"]
 build-backend = "maturin"
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+# まずはpyflakes/pycodestyle相当の基本ルールと、isortの代わりとしてI（import順）のみを有効にする
+select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.pyright]
 stubPath = "../../example/python/typings"
@@ -54,6 +58,5 @@ maturin = "1.10.2"
 pytest = "7.3.1"
 pytest-asyncio = "0.21.0"
 pytest-codspeed = "4.2.0"
-black = "23.3.0"
-isort = "5.13.2"
+ruff = "0.16.9"
 numpy = "2.2.6" # Python 3.10で動く最大バージョン

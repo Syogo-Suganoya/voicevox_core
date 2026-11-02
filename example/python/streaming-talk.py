@@ -140,12 +140,15 @@ def main() -> None:
     num_wrote_segments = 0
     num_total_segments = operator.length_hint(stream)
 
-    with contextlib.closing(spawn_stream(stream)) as audio, RawOutputStream(
-        samplerate=float(audio_query.output_sampling_rate),
-        channels=2 if audio_query.output_stereo else 1,
-        dtype="int16",
-        latency=args.segment_length + 0.1,
-    ) as out:
+    with (
+        contextlib.closing(spawn_stream(stream)) as audio,
+        RawOutputStream(
+            samplerate=float(audio_query.output_sampling_rate),
+            channels=2 if audio_query.output_stereo else 1,
+            dtype="int16",
+            latency=args.segment_length + 0.1,
+        ) as out,
+    ):
         rendering_started = time.monotonic_ns()
         # FIXME: voicevox_coreはrenderしている間ずっとGILを掴みっぱなしなので、writeが詰まる場合があるかも。注意書きを書くか、GILをできるだけ放すようにする
         for segment in audio:

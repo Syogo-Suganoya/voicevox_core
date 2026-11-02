@@ -16,7 +16,7 @@ def test_slicing_half_closed(
     feat = blocking_synthesizer_with_model.create_audio_feature(query, STYLE_ID)
     assert len(feat) == LEN
 
-    for i, j, k, l in product(range(-LEN - 1, LEN + 2), repeat=4):
-        expected = range(LEN)[i:j][k:l]
-        actual = feat[i:j][k:l]
+    for start1, stop1, start2, stop2 in product(range(-LEN - 1, LEN + 2), repeat=4):
+        expected = range(LEN)[start1:stop1][start2:stop2]
+        actual = feat[start1:stop1][start2:stop2]
         assert (actual.start_offset, len(actual)) == (expected.start, len(expected))
