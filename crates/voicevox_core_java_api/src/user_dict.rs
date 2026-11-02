@@ -6,7 +6,7 @@ use crate::common::{JNIEnvExt as _, JavaApiResult, throw_if_err};
 use jni::{
     JNIEnv,
     objects::{JObject, JString},
-    sys::jobject,
+    sys::{jint, jobject},
 };
 use serde_json::json;
 
@@ -325,16 +325,24 @@ extern "system" fn Java_jp_hiroshiba_voicevoxcore_UserDictWord_rsToZenkaku<'loca
 
 // SAFETY: voicevox_core_java_apiを構成するライブラリの中に、これと同名のシンボルは存在しない
 #[unsafe(no_mangle)]
-extern "system" fn Java_jp_hiroshiba_voicevoxcore_UserDictWord_rsValidatePronunciation<'local>(
+extern "system" fn Java_jp_hiroshiba_voicevoxcore_UserDictWord_rsValidatePronunciationAndAccentType<
+    'local,
+>(
     env: JNIEnv<'local>,
     _cls: JClass<'local>,
-    text: JString<'local>,
+    pronunciation: JString<'local>,
+    accent_type: jint,
 ) {
     throw_if_err(env, (), |env| {
-        let text = env.get_string(&text)?;
-        let text = &Cow::from(&text);
+        let pronunciation = env.get_string(&pronunciation)?;
+        let pronunciation = String::from(Cow::from(&pronunciation));
+        let accent_type = accent_type
+            .try_into()
+            .expect("should have been checked on the Java side");
 
-        voicevox_core::__internal::validate_pronunciation(text)?;
+        // 発音のバリデーションに加え、アクセント型がモーラ数を超えていないかも確認するため、
+        // 実際に`UserDictWord`を構築してみる。表層形はバリデーションに関与しない
+        voicevox_core::UserDictWord::builder().build("", pronunciation, accent_type)?;
 
         Ok(())
     })
