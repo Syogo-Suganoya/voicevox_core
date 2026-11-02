@@ -466,7 +466,9 @@ pub unsafe extern "C" fn voicevox_open_jtalk_rc_analyze(
 ///
 /// 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 ///
-/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
+/// `open_jtalk`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] open_jtalk 破棄対象。nullable
 ///
@@ -1048,7 +1050,7 @@ pub unsafe extern "C" fn voicevox_ensure_compatible(
 // SAFETY: voicevox_core_c_apiを構成するライブラリの中に、これと同名のシンボルは存在しない
 /// signed 16-bit little endianのPCMデータからWAV形式のバイナリを生成する。
 ///
-/// `pcm`がヌルならクラッシュする。
+/// `pcm`がヌルなら<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] pcm_length PCMデータのバイト長
 /// @param [in] pcm PCMデータ。非ヌル
@@ -1204,7 +1206,9 @@ pub extern "C" fn voicevox_voice_model_file_create_metas_json(
 ///
 /// 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 ///
-/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
+/// `model`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] model 破棄対象。nullable
 ///
@@ -1263,7 +1267,9 @@ pub unsafe extern "C" fn voicevox_synthesizer_new(
 ///
 /// 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 ///
-/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
+/// `synthesizer`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] synthesizer 破棄対象。nullable
 ///
@@ -2224,7 +2230,9 @@ pub unsafe extern "C" fn voicevox_synthesizer_render(
 ///
 /// 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 ///
-/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
+/// `audio_feature`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] audio_feature 破棄対象。nullable
 ///
@@ -2612,6 +2620,8 @@ pub unsafe extern "C" fn voicevox_synthesizer_frame_synthesis(
 // SAFETY: voicevox_core_c_apiを構成するライブラリの中に、これと同名のシンボルは存在しない
 /// 文字列を解放する。
 ///
+/// `string`がヌルポインタでなく、かつこのライブラリが生成した未解放の文字列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。また ::voicevox_error_result_to_message などが返す、解放できない文字列を渡した場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
 /// @param [in] string 解放する文字列。nullable
 ///
 /// \safety{
@@ -2649,6 +2659,8 @@ pub unsafe extern "C" fn voicevox_string_free(string: *mut c_char) {
 
 // SAFETY: voicevox_core_c_apiを構成するライブラリの中に、これと同名のシンボルは存在しない
 /// ::voicevox_string_free の別名。非推奨。
+///
+/// `json`がヌルポインタでなく、かつこのライブラリが生成した未解放の文字列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。また ::voicevox_error_result_to_message などが返す、解放できない文字列を渡した場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] json 解放するJSON文字列。nullable
 ///
@@ -2688,6 +2700,8 @@ pub unsafe extern "C" fn voicevox_json_free(json: *mut c_char) {
 ///
 /// ::voicevox_empty_bytes に対しては警告のログを出す。
 ///
+/// `bytes`がヌルポインタでも ::voicevox_empty_bytes でもなく、かつこのライブラリが生成した未解放のバイト列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
 /// @param [in] bytes 解放するバイト列。nullable
 ///
 /// \safety{
@@ -2711,6 +2725,8 @@ pub extern "C" fn voicevox_bytes_free(bytes: *mut u8) {
 
 // SAFETY: voicevox_core_c_apiを構成するライブラリの中に、これと同名のシンボルは存在しない
 /// ::voicevox_bytes_free の別名。非推奨。
+///
+/// `wav`がヌルポインタでも ::voicevox_empty_bytes でもなく、かつこのライブラリが生成した未解放のバイト列でもない場合(二重解放など)、<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] wav 解放するWAVデータ。nullable
 ///
@@ -3046,7 +3062,9 @@ pub unsafe extern "C" fn voicevox_user_dict_save(
 ///
 /// 破棄対象への他スレッドでのアクセスが存在する場合、それらがすべて終わるのを待ってから破棄する。
 ///
-/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、プロセスを異常終了する。
+/// この関数の呼び出し後に破棄し終えた対象にアクセスすると、<a href="#voicevox-core-crash">クラッシュ</a>する。
+///
+/// `user_dict`が既に破棄されている場合(二重解放)、もしくはこのライブラリで構築したものではない場合も<a href="#voicevox-core-crash">クラッシュ</a>する。
 ///
 /// @param [in] user_dict 破棄対象。nullable
 ///
