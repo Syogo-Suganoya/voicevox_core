@@ -2848,7 +2848,7 @@ pub(crate) mod blocking {
             self
         }
 
-        /// CPU利用数を指定。0を指定すると環境に合わせたCPUが利用される。
+        /// CPU利用数を指定。0を指定すると論理コア数の半分(最低1)が利用される。
         pub fn cpu_num_threads(mut self, cpu_num_threads: u16) -> Self {
             self.options.cpu_num_threads = cpu_num_threads;
             self
@@ -4017,7 +4017,7 @@ pub(crate) mod nonblocking {
             self
         }
 
-        /// CPU利用数を指定。0を指定すると環境に合わせたCPUが利用される。
+        /// CPU利用数を指定。0を指定すると論理コア数の半分(最低1)が利用される。
         ///
         /// # Performance
         ///

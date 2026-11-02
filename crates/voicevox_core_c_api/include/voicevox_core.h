@@ -458,7 +458,7 @@ typedef struct VoicevoxInitializeOptions {
   VoicevoxAccelerationMode acceleration_mode;
   /**
    * CPU利用数を指定
-   * 0を指定すると環境に合わせたCPUが利用される
+   * 0を指定すると論理コア数の半分(最低1)が利用される
    */
   uint16_t cpu_num_threads;
 } VoicevoxInitializeOptions;

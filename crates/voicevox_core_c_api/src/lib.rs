@@ -527,7 +527,7 @@ pub struct VoicevoxInitializeOptions {
     /// ハードウェアアクセラレーションモード
     acceleration_mode: VoicevoxAccelerationMode,
     /// CPU利用数を指定
-    /// 0を指定すると環境に合わせたCPUが利用される
+    /// 0を指定すると論理コア数の半分(最低1)が利用される
     cpu_num_threads: u16,
 }
 

@@ -290,7 +290,7 @@ impl InferenceRuntime for self::blocking::Onnxruntime {
         let mut builder = ort::session::Session::builder()?
             .with_optimization_level(GraphOptimizationLevel::Level1)
             .map_err(ort::Error::<()>::from)?
-            .with_intra_threads(options.cpu_num_threads.into())
+            .with_intra_threads(intra_threads(options.cpu_num_threads))
             .map_err(ort::Error::<()>::from)?;
 
         match options.device {
@@ -473,6 +473,17 @@ impl InferenceRuntime for self::blocking::Onnxruntime {
         } else {
             ::blocking::unblock(move || extract_outputs(&sess.lock_blocking().run(inputs)?)).await
         }
+    }
+}
+
+/// `cpu_num_threads`を、ONNX Runtimeの`intra_op_num_threads`に変換する。
+///
+/// `0`の場合は、ONNX Runtimeのデフォルト(物理コア数)ではなく論理コア数の半分(最低1)とする。論理コア数が取得
+/// できなかった場合は`0`のままONNX Runtimeに任せる。
+fn intra_threads(cpu_num_threads: u16) -> usize {
+    match cpu_num_threads {
+        0 => std::thread::available_parallelism().map_or(0, |n| (n.get() / 2).max(1)),
+        n => n.into(),
     }
 }
 
@@ -950,6 +961,20 @@ mod tests {
             super::blocking::Onnxruntime::LIB_RECOMMENDED_VERSION,
             super::nonblocking::Onnxruntime::LIB_RECOMMENDED_VERSION,
         );
+    }
+
+    #[rstest]
+    #[case(1, 1)]
+    #[case(2, 2)]
+    #[case(0xffff, 0xffff)]
+    fn intra_threads_passes_through_nonzero(#[case] cpu_num_threads: u16, #[case] expected: usize) {
+        assert_eq!(expected, super::intra_threads(cpu_num_threads));
+    }
+
+    #[rstest]
+    fn intra_threads_uses_half_of_logical_cores_for_zero() {
+        let expected = (std::thread::available_parallelism().unwrap().get() / 2).max(1);
+        assert_eq!(expected, super::intra_threads(0));
     }
 
     #[rstest]
