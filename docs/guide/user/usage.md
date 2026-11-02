@@ -12,6 +12,18 @@ VOICEVOX の音声合成のコア部分で、VOICEVOX 音声合成が可能で�
 
 ## 環境構築
 
+### 動作環境
+
+#### Linux
+
+[Releases](https://github.com/VOICEVOX/voicevox_core/releases) にある Linux 向けのビルド済みライブラリ（C API の動的ライブラリ、Python API の wheel）の動作には、glibc 2.34 以降が必要です。例えば次のディストリビューションが該当します。
+
+- Ubuntu 22.04 以降
+- Debian 12 以降
+- RHEL 9 系（AlmaLinux 9、Rocky Linux 9 など）以降
+
+glibc のバージョンは`ldd --version`で確認できます。
+
 ### 実行に必要なファイルのダウンロード
 
 コアを動作させるには依存ライブラリである VOICEVOX ONNX Runtime や、音声合成のための音声モデル（VVM ファイル）が必要です。これらはコア用の Downloader を用いてダウンロードすることができます。
