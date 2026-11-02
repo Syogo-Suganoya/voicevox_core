@@ -23,6 +23,10 @@ sed 's:^//\(#define VOICEVOX_LOAD_ONNXRUNTIME\)$:\1:' \
 
 ## C APIライブラリのテスト
 
+テストではヘッダファイルからバインディングを生成するために [bindgen](https://crates.io/crates/bindgen) を使っており、Clang (libclang) が必要です。
+環境ごとのインストール方法は [bindgenのRequirements](https://rust-lang.github.io/rust-bindgen/requirements.html) を参照してください。
+Clangが無い場合、`fatal error: 'stdbool.h' file not found` などのエラーでビルドに失敗します。
+
 ```bash
 cargo test -p voicevox_core_c_api --features load-onnxruntime -- --include-ignored
 ```
