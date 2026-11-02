@@ -24,6 +24,6 @@ async def test_synthesizer_metas_works(voice_model: VoiceModelFile) -> None:
     _ = synthesizer.metas()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture  # pyright: ignore[reportUnknownMemberType, reportUntypedFunctionDecorator]
 async def voice_model() -> VoiceModelFile:
     return await VoiceModelFile.open(conftest.model_dir)

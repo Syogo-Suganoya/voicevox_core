@@ -80,7 +80,7 @@ async def test(synthesizer: Synthesizer) -> None:
         )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture  # pyright: ignore[reportUnknownMemberType, reportUntypedFunctionDecorator]
 async def synthesizer() -> Synthesizer:
     onnxruntime = await Onnxruntime.load_once(filename=conftest.onnxruntime_filename)
     open_jtalk = await OpenJtalk.new(conftest.open_jtalk_dic_dir)

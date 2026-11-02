@@ -23,6 +23,7 @@ build-backend = "maturin"
 profile = "black"
 
 [tool.pyright]
+typeCheckingMode = "strict"
 stubPath = "../../example/python/typings"
 executionEnvironments = [{ root = "python/benches" }, { root = "python/test" }, { root = "python" }]
 
